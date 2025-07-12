@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Run tests with coverage
-        run: npm test -- --coverage
+        run: npm test -- --coverage --json --outputFile=jest-result.json > test-output.txt
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
@@ -36,17 +36,17 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          TESTS=$(grep -o 'Tests: [0-9]*' test-output.txt | awk '{print $2}')
-          PASSES=$(grep -o 'Passed: [0-9]*' test-output.txt | awk '{print $2}')
-          FAILURES=$(grep -o 'Failed: [0-9]*' test-output.txt | awk '{print $2}')
-          SKIP=$(grep -o 'Skipped: [0-9]*' test-output.txt | awk '{print $2}')
-          DURATION=$(grep -o 'Time: [0-9]*ms' test-output.txt | awk '{print $2}')
+          TESTS=$(jq '.numTotalTests' jest-result.json)
+          PASSES=$(jq '.numPassedTests' jest-result.json)
+          FAILURES=$(jq '.numFailedTests' jest-result.json)
+          SKIP=$(jq '.numPendingTests' jest-result.json)
+          DURATION=$(jq '.testResults | map(.endTime - .startTime) | add' jest-result.json)
           PASS_PERCENT=0
-          if [ "$TESTS" != "" ] && [ "$PASSES" != "" ]; then PASS_PERCENT=$(awk "BEGIN {print ($PASSES/$TESTS)*100}"); fi
+          if [ "$TESTS" != "0" ] && [ "$PASSES" != "0" ]; then PASS_PERCENT=$(awk "BEGIN {print ($PASSES/$TESTS)*100}"); fi
           curl -X POST -H 'Content-type: application/json' --data "{
             \"blocks\": [
               {\"type\": \"header\",\"text\": {\"type\": \"plain_text\",\"text\": \"Unit Test Report\"}},
-              {\"type\": \"section\",\"text\": {\"type\": \"mrkdwn\",\"text\": \"*Repo:* ${{ github.repository }}\\n*Branch:* ${{ github.ref_name }}\\n*Commit:* ${{ github.sha }}\\n\\n*Tests* = $TESTS\\n*Passes* = $PASSES\\n*Skip* = $SKIP\\n*Failures* = $FAILURES\\n*Duration* = $DURATION\\n*Passes (%)* = $PASS_PERCENT\"}},
+              {\"type\": \"section\",\"text\": {\"type\": \"mrkdwn\",\"text\": \"*Repo:* ${{ github.repository }}\\n*Branch:* ${{ github.ref_name }}\\n*Commit:* ${{ github.sha }}\\n\\n*Tests* = $TESTS\\n*Passes* = $PASSES\\n*Skip* = $SKIP\\n*Failures* = $FAILURES\\n*Duration* = $DURATION ms\\n*Passes (%)* = $PASS_PERCENT\"}},
               {\"type\": \"actions\",\"elements\": [
                 {\"type\": \"button\",\"text\": {\"type\": \"plain_text\",\"text\": \"VIEW DETAIL\"},\"url\": \"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}
               ]}
