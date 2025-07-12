@@ -121,3 +121,40 @@ update-profile/
 
 - **Purpose:** This project serves as a template or a starting point for building full-stack Next.js applications with a focus on best practices for testing and CI/CD.
 - **Extensibility:** The project can be easily extended by adding more pages, API routes, and components. The existing structure provides a clear separation of concerns, making it scalable for larger applications.
+
+# Modul 5 - Assignment 11 - Hendri Christianto
+
+## Code Coverage & CI
+
+![Codecov](https://codecov.io/gh/Hendrich/unit-test/branch/main/graph/badge.svg)
+
+Project ini sudah terintegrasi dengan GitHub Actions dan Codecov untuk coverage tracking.
+
+- Test coverage minimal 90%
+- Pipeline otomatis menjalankan test dan meng-upload hasil coverage ke Codecov
+- Laporan coverage dapat dilihat di `coverage/lcov-report/index.html`
+
+## Cara Menjalankan
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Jalankan test dan coverage:
+   ```bash
+   npm test -- --coverage
+   ```
+3. Lihat hasil coverage di folder `coverage/lcov-report/index.html`
+
+## Integrasi Codecov
+
+- Badge coverage otomatis muncul di atas.
+- Pipeline akan gagal jika coverage tidak ter-upload.
+
+## (Optional) Notifikasi
+
+Pipeline dapat diintegrasikan dengan Telegram/Google Space sesuai kebutuhan.
+
+---
+
+> Assignment 11 - BINAR Academy
