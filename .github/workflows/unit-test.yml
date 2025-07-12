@@ -31,6 +31,27 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
+      - name: Notify Slack with Block Kit
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          TESTS=$(grep -o 'Tests: [0-9]*' test-output.txt | awk '{print $2}')
+          PASSES=$(grep -o 'Passed: [0-9]*' test-output.txt | awk '{print $2}')
+          FAILURES=$(grep -o 'Failed: [0-9]*' test-output.txt | awk '{print $2}')
+          SKIP=$(grep -o 'Skipped: [0-9]*' test-output.txt | awk '{print $2}')
+          DURATION=$(grep -o 'Time: [0-9]*ms' test-output.txt | awk '{print $2}')
+          PASS_PERCENT=0
+          if [ "$TESTS" != "" ] && [ "$PASSES" != "" ]; then PASS_PERCENT=$(awk "BEGIN {print ($PASSES/$TESTS)*100}"); fi
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"blocks\": [
+              {\"type\": \"header\",\"text\": {\"type\": \"plain_text\",\"text\": \"Unit Test Report\"}},
+              {\"type\": \"section\",\"text\": {\"type\": \"mrkdwn\",\"text\": \"*Repo:* ${{ github.repository }}\\n*Branch:* ${{ github.ref_name }}\\n*Commit:* ${{ github.sha }}\\n\\n*Tests* = $TESTS\\n*Passes* = $PASSES\\n*Skip* = $SKIP\\n*Failures* = $FAILURES\\n*Duration* = $DURATION\\n*Passes (%)* = $PASS_PERCENT\"}},
+              {\"type\": \"actions\",\"elements\": [
+                {\"type\": \"button\",\"text\": {\"type\": \"plain_text\",\"text\": \"VIEW DETAIL\"},\"url\": \"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}
+              ]}
+            ]
+          }" $SLACK_WEBHOOK_URL
           STATUS="${{ job.status }}"
           curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"CI Pipeline *$STATUS* untuk repo ${{ github.repository }}\"}" $SLACK_WEBHOOK_URL
       # Optional: Telegram notification
