@@ -26,6 +26,13 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/lcov.info
           fail_ci_if_error: true
+      - name: Notify Slack
+        if: always()
+        env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+        STATUS="${{ job.status }}"
+        curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"CI Pipeline *$STATUS* untuk repo ${{ github.repository }}\"}" $SLACK_WEBHOOK_URL
       # Optional: Telegram notification
       # - name: Notify Telegram
       #   uses: appleboy/telegram-action@master

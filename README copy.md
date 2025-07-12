@@ -126,7 +126,7 @@ update-profile/
 
 ## Code Coverage & CI
 
-![Codecov](https://codecov.io/gh/Hendrich/unit-test/branch/main/graph/badge.svg)
+[![codecov](https://codecov.io/github/Hendrich/unit-test/branch/main/graph/badge.svg?token=S0LXPRJMTB)](https://codecov.io/github/Hendrich/unit-test)
 
 Project ini sudah terintegrasi dengan GitHub Actions dan Codecov untuk coverage tracking.
 
