@@ -210,5 +210,6 @@ describe("Integration: Login and Update Profile", () => {
     const data = await result.json();
     expect(Object.keys(data.errors).length).toBeGreaterThan(1);
   });
+  /// test untuk branch coverage
   // Tambahkan skenario lain untuk branch coverage jika ada logika lain
 });
