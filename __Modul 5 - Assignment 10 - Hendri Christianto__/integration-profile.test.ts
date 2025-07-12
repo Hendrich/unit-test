@@ -191,5 +191,24 @@ describe("Integration: Login and Update Profile", () => {
     const result = await profileHandler(req as any);
     expect(result.status).toBe(400);
   });
+
+  it("should return 400 and multiple errors for multiple invalid fields", async () => {
+    const req = new Request("http://localhost/api/profile", {
+      method: "PUT",
+      body: JSON.stringify({
+        username: "usr", // kurang dari 6 karakter
+        fullName: "", // kosong
+        email: "bad", // tidak valid
+        phone: "abc", // bukan angka dan kurang dari 10 digit
+        birthDate: "3000-01-01", // di masa depan
+        bio: "a".repeat(200), // lebih dari 160 karakter
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const result = await profileHandler(req as any);
+    expect(result.status).toBe(400);
+    const data = await result.json();
+    expect(Object.keys(data.errors).length).toBeGreaterThan(1);
+  });
   // Tambahkan skenario lain untuk branch coverage jika ada logika lain
 });
