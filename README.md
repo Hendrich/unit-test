@@ -117,6 +117,8 @@ update-profile/
 - **Continuous Integration (CI):** The project uses GitHub Actions to run tests automatically on every push and pull request to the `main` branch. The workflow is defined in `.github/workflows/test.yml`.
 - **Code Coverage:** Code coverage is generated on each test run and uploaded to Codecov. This helps in tracking the quality of the tests and ensuring that new code is adequately tested. The `codecov.yml` file configures how coverage is reported.
 
+[![codecov](https://codecov.io/gh/Hendrich/unit-test/graph/badge.svg?token=S0LXPRJMTB)](https://codecov.io/gh/Hendrich/unit-test)
+
 ## Notes
 
 - **Purpose:** This project serves as a template or a starting point for building full-stack Next.js applications with a focus on best practices for testing and CI/CD.
